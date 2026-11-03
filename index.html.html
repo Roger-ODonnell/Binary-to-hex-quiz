@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binary → Hex Practice</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --success: #22c55e;
+      --error: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+    }
+
+    .question-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .binary-display {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      margin-bottom: 1.75rem;
+      word-break: break-all;
+      color: var(--accent);
+    }
+
+    .input-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 1.25rem;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      background: #0f172a;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="text"].correct {
+      border-color: var(--success);
+    }
+
+    input[type="text"].wrong {
+      border-color: var(--error);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-check {
+      background: var(--accent);
+      color: #0f172a;
+    }
+
+    .btn-check:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-next {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-next:hover {
+      border-color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .feedback {
+      min-height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border-radius: 10px;
+      padding: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .feedback.correct {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+    }
+
+    .feedback.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+    }
+
+    .feedback.neutral {
+      color: var(--muted);
+    }
+
+    .score {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .score strong {
+      color: var(--text);
+    }
+
+    .bit-options {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .bit-btn {
+      flex: none;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.85rem;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    .bit-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    .bit-btn:hover:not(.active) {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    @media (max-width: 400px) {
+      .binary-display {
+        font-size: 1.35rem;
+        letter-spacing: 0.1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Binary → Hex</h1>
+    <p class="subtitle">Convert the binary number to hexadecimal</p>
+
+    <div class="card">
+      <div class="bit-options">
+        <button class="bit-btn active" data-bits="4">4-bit</button>
+        <button class="bit-btn" data-bits="8">8-bit</button>
+        <button class="bit-btn" data-bits="12">12-bit</button>
+        <button class="bit-btn" data-bits="16">16-bit</button>
+      </div>
+
+      <div class="question-label">Convert this binary number</div>
+      <div class="binary-display" id="binaryDisplay">----</div>
+
+      <div class="input-group">
+        <label for="answer">Your answer (hex)</label>
+        <input type="text" id="answer" placeholder="e.g. A3" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="buttons">
+        <button class="btn-check" id="checkBtn">Check</button>
+        <button class="btn-next" id="nextBtn">Next</button>
+      </div>
+
+      <div class="feedback neutral" id="feedback">Enter your answer and press Check</div>
+    </div>
+
+    <div class="score">
+      Score: <strong id="scoreCorrect">0</strong> correct / <strong id="scoreTotal">0</strong> attempts
+    </div>
+  </div>
+
+  <script>
+    const binaryDisplay = document.getElementById('binaryDisplay');
+    const answerInput = document.getElementById('answer');
+    const checkBtn = document.getElementById('checkBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const feedback = document.getElementById('feedback');
+    const scoreCorrectEl = document.getElementById('scoreCorrect');
+    const scoreTotalEl = document.getElementById('scoreTotal');
+    const bitButtons = document.querySelectorAll('.bit-btn');
+
+    let currentBinary = '';
+    let currentHex = '';
+    let bits = 4;
+    let correct = 0;
+    let total = 0;
+    let answered = false;
+
+    function randomBinary(n) {
+      let result = '';
+      for (let i = 0; i < n; i++) {
+        result += Math.random() < 0.5 ? '0' : '1';
+      }
+      return result;
+    }
+
+    function binaryToHex(bin) {
+      // Pad to multiple of 4
+      const padded = bin.padStart(Math.ceil(bin.length / 4) * 4, '0');
+      let hex = '';
+      for (let i = 0; i < padded.length; i += 4) {
+        const nibble = padded.slice(i, i + 4);
+        hex += parseInt(nibble, 2).toString(16).toUpperCase();
+      }
+      return hex;
+    }
+
+    function newQuestion() {
+      currentBinary = randomBinary(bits);
+      currentHex = binaryToHex(currentBinary);
+      binaryDisplay.textContent = currentBinary.match(/.{1,4}/g).join(' ');
+      answerInput.value = '';
+      answerInput.classList.remove('correct', 'wrong');
+      answerInput.focus();
+      answered = false;
+      feedback.textContent = 'Enter your answer and press Check';
+      feedback.className = 'feedback neutral';
+    }
+
+    function checkAnswer() {
+      if (answered) return;
+
+      const user = answerInput.value.trim().toUpperCase().replace(/^0x/i, '');
+      if (!user) {
+        feedback.textContent = 'Please enter an answer';
+        feedback.className = 'feedback neutral';
+        return;
+      }
+
+      total++;
+      scoreTotalEl.textContent = total;
+
+      // Accept answers with or without leading zeros (as long as value matches)
+      const userVal = parseInt(user, 16);
+      const correctVal = parseInt(currentHex, 16);
+
+      if (!isNaN(userVal) && userVal === correctVal) {
+        correct++;
+        scoreCorrectEl.textContent = correct;
+        feedback.textContent = 'Correct! ✓';
+        feedback.className = 'feedback correct';
+        answerInput.classList.add('correct');
+      } else {
+        feedback.textContent = `Wrong. Correct answer is ${currentHex}`;
+        feedback.className = 'feedback wrong';
+        answerInput.classList.add('wrong');
+      }
+      answered = true;
+    }
+
+    // Event listeners
+    checkBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', newQuestion);
+
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (answered) {
+          newQuestion();
+        } else {
+          checkAnswer();
+        }
+      }
+    });
+
+    bitButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        bitButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        bits = parseInt(btn.dataset.bits, 10);
+        newQuestion();
+      });
+    });
+
+    // Start
+    newQuestion();
+  </script>
+</body>
+</html>
